@@ -1,0 +1,11 @@
+{
+  "name": "rom-builder",
+  "version": "1.0.0",
+  "description": "\"Tool for reading and writing to ROM files\"",
+  "main": "builder.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "author": "Bropedio",
+  "license": "ISC"
+}
