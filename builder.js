@@ -22,8 +22,8 @@ class Builder {
     this[this.action].apply(this, this.args);
   }
 
-  dump (rom_path, dump_dir = './dump', schema_dir = './schema') {
-    const schema = new Schema(require_dir(schema_dir));
+  dump (rom_path, dump_dir = './dump', schema_dir = './schema', migration_path) {
+    const schema = get_schema(schema_dir, migration_path);
     const rom = new HiRom(fs.readFileSync(resolve(rom_path)));
     const game_data = schema.decode(rom);
     const formatted = schema.format(game_data);
@@ -41,8 +41,8 @@ class Builder {
     }
   }
 
-  import (rom_path, save_as, data_path = './data', schema_dir = './schema') {
-    const schema = new Schema(require_dir(schema_dir));
+  import (rom_path, save_as, data_path = './data', schema_dir = './schema', migration_path) {
+    const schema = get_schema(schema_dir, migration_path);
     const game_data = schema.parse(read_dir(data_path));
     const init_rom = new HiRom(fs.readFileSync(resolve(rom_path)));
     const new_rom = schema.encode(game_data, init_rom);
@@ -50,14 +50,14 @@ class Builder {
     fs.writeFileSync(resolve(save_as || rom_path), new_rom.buffer);
   }
 
-  test (rom_path, schema_dir = './schema') {
-    const schema = new Schema(require_dir(schema_dir));
+  test (rom_path, schema_dir = './schema', migration_path) {
+    const schema = get_schema(schema_dir, migration_path);
     const rom = new HiRom(fs.readFileSync(resolve(rom_path)));
     const game_data = schema.decode(rom);
     const formatted = schema.format(game_data);
     const parsed = schema.parse(formatted);
     const new_rom = schema.encode(parsed, rom);
-    const new_schema = new Schema(require_dir(schema_dir));
+    const new_schema = get_schema(schema_dir, migration_path);
     const new_game_data = new_schema.decode(new_rom);
     const new_formatted = new_schema.format(new_game_data);
 
@@ -65,8 +65,8 @@ class Builder {
     console.log("Schema passed");
   }
 
-  optimize (rom_path, save_as, schema_dir = './schema') {
-    const schema = new Schema(require_dir(schema_dir));
+  optimize (rom_path, save_as, schema_dir = './schema', migration_path) {
+    const schema = get_schema(schema_dir, migration_path);
     const rom = new HiRom(fs.readFileSync(resolve(rom_path)));
     const game_data = schema.decode(rom);
     const optimized = schema.optimize(game_data);
@@ -93,6 +93,11 @@ class Builder {
 }
 
 /* Other Helpers */
+
+function get_schema (schema_dir, migration_path) {
+  const migration = migration_path && require(resolve(migration_path));
+  return new Schema(require_dir(schema_dir), migration);
+}
 
 function test_formatteds (formatted_a, formatted_b) {
   for (let key in formatted_a) {
