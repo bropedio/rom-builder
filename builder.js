@@ -11,7 +11,7 @@ const path = require('path');
 const HiRom = require('./lib/hirom');
 const Schema = require('./lib/schema');
 const types = require('./lib/types');
-const search = require('./lib/search');
+const { search, replace } = require('./lib/search');
 
 /* Builder */
 
@@ -139,5 +139,7 @@ function reduce_dir (dir_path, mapper) {
 module.exports = {
   Builder,
   types,
-  search
+  search,
+  replace,
+  require_dir
 };
