@@ -141,10 +141,25 @@ function reduce_dir (dir_path, mapper) {
   return exports;
 }
 
+function get_values ({ data, scheme }, get_prop) {
+  const items = scheme.type.format(data);
+  const seen_items = {};
+  return items.map((item, i) => {
+    const prop = get_prop ? get_prop(item, i) : item.Name.trim();
+    if (seen_items[prop]) {
+      return `${i}:${prop}`;
+    } else {
+      seen_items[prop] = true;
+      return prop;
+    }
+  });
+}
+
 module.exports = {
   Builder,
   types,
   search,
   replace,
-  require_dir
+  require_dir,
+  get_values // TODO Move this logic elsewhere
 };
