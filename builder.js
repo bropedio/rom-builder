@@ -131,7 +131,7 @@ function reduce_dir (dir_path, mapper) {
   fs.readdirSync(dir_path, {
     withFileTypes: true
   }).forEach(item => {
-    if (item.isFile()) {
+    if (item.isFile() && !/\.swp$/.test(item.name)) {
       const fullpath = resolve(dir_path, item.name);
       const [name, ext] = item.name.split('.');
       exports[name] = mapper(fullpath);
