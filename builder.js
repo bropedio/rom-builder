@@ -158,7 +158,7 @@ function get_values ({ data, scheme }, get_prop) {
 module.exports = {
   Builder,
   types,
-  Hirom,
+  HiRom,
   search,
   replace,
   require_dir,
