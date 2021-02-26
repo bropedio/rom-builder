@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const HiRom = require('./lib/hirom');
+const { HiRom, LoRom } = require('./lib/hirom');
 const Schema = require('./lib/schema');
 const types = require('./lib/types');
 const { search, replace } = require('./lib/search');
@@ -22,9 +22,19 @@ class Builder {
     this[this.action].apply(this, this.args);
   }
 
-  dump (rom_path, dump_dir = './dump', schema_dir = './schema') {
+  dump (...args) {
+    args.unshift(HiRom);
+    this.dump_base.apply(this, args);
+  }
+
+  dump_lo (...args) {
+    args.unshift(LoRom);
+    this.dump_base.apply(this, args);
+  }
+
+  dump_base (Rom, rom_path, dump_dir = './dump', schema_dir = './schema') {
     const schema = get_schema(schema_dir);
-    const rom = new HiRom(fs.readFileSync(resolve(rom_path)));
+    const rom = new Rom(fs.readFileSync(resolve(rom_path)));
     const game_data = schema.decode(rom);
     const formatted = schema.format(game_data);
     const extensions = schema.get_extensions();
