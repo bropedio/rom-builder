@@ -46,7 +46,7 @@ class Builder {
     for (let name in formatted) {
       let filename = `${name}.${extensions[name]}`;
       let output_path = resolve(dump_dir, filename);
-      let output_string = formatted[name];
+      let output_string = formatted[name] + '\n';
       fs.writeFileSync(output_path, output_string);
     }
   }
@@ -100,8 +100,15 @@ class Builder {
 
 /* Other Helpers */
 
-function get_schema (schema_dir) {
-  return new Schema(require_dir(schema_dir));
+function get_schema (schema_path) {
+  const is_dir = fs.lstatSync(schema_path).isDirectory();
+  const file = is_dir ? null : schema_path.split('/').pop().split('.')[0];
+  const dir = is_dir ? schema_path : schema_path.replace(/\/[^\/]+/, '');
+  const schema_files = require_dir(dir);
+  const schema = is_dir ? schema_files : { [file]: schema_files[file] };
+
+  if (file === 'script') schema.dtes = schema_files.dtes;
+  return new Schema(schema);
 }
 
 function test_formatteds (formatted_a, formatted_b) {
