@@ -167,8 +167,52 @@ function get_values ({ data, scheme }, get_prop) {
   });
 }
 
+function build_short (action, rom_path) {
+  switch (action) {
+  case 'dump':
+    new Builder('dump', [
+      rom_path,
+      './dump',
+      './schema'
+    ]);
+    break;
+  case 'test':
+    new Builder('test', [
+      rom_path,
+      './schema'
+    ]);
+    break;
+  case 'fastcompile':
+    new Builder('import', [
+      rom_path,
+      rom_path,
+      './data',
+      './schema'
+    ]);
+    break;
+  case 'compile':
+    new Builder('import', [
+      rom_path,
+      rom_path,
+      './data',
+      './schema'
+    ]);
+    new Builder('optimize', [
+      rom_path,
+      rom_path,
+      './schema'
+    ]);
+    break;
+  default:
+    throw new Error('Requested action not found');
+  }
+
+  return console.log("Done");
+}
+
 module.exports = {
   Builder,
+  build_short,
   types,
   HiRom,
   search,
