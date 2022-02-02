@@ -78,8 +78,7 @@ class Builder {
   optimize (rom_path, save_as, schema_dir = './schema') {
     const schema = get_schema(schema_dir);
     const rom = new HiRom(fs.readFileSync(resolve(rom_path)));
-    const game_data = schema.decode(rom);
-    const optimized = schema.optimize(game_data);
+    const optimized = schema.decode(rom, 'optimize');
 
     // Reset schema based on optimized data
     const formatted = schema.format(optimized);
@@ -120,6 +119,8 @@ function test_formatteds (formatted_a, formatted_b) {
       fs.writeFileSync(resolve('testdata1.txt'), one_formatted);
       fs.writeFileSync(resolve('testdata2.txt'), one_new_formatted);
       throw new Error(`Test failed: ${key}`);
+    } else {
+      console.log(`${key}: Passed`);
     }
   }
 }
@@ -151,20 +152,6 @@ function reduce_dir (dir_path, mapper) {
   });
 
   return exports;
-}
-
-function get_values ({ data, scheme }, get_prop) {
-  const items = scheme.type.format(data);
-  const seen_items = {};
-  return items.map((item, i) => {
-    const prop = get_prop ? get_prop(item, i) : item.Name.trim();
-    if (seen_items[prop]) {
-      return `${i}:${prop}`;
-    } else {
-      seen_items[prop] = true;
-      return prop;
-    }
-  });
 }
 
 function build_short (action, rom_path) {
@@ -217,6 +204,5 @@ module.exports = {
   HiRom,
   search,
   replace,
-  require_dir,
-  get_values // TODO Move this logic elsewhere
+  require_dir
 };
