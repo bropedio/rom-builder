@@ -56,8 +56,7 @@ class Builder {
     const game_data = schema.parse(read_dir(data_path));
     const init_rom = new HiRom(fs.readFileSync(resolve(rom_path)));
     const new_rom = schema.encode(game_data, init_rom);
-
-    fs.writeFileSync(resolve(save_as || rom_path), new_rom.buffer);
+    finalize_rom(save_as || rom_path, new_rom);
   }
 
   test (rom_path, schema_dir = './schema') {
@@ -93,11 +92,16 @@ class Builder {
     test_formatteds(formatted, new_format);
 
     console.log("Optimization successful");
-    fs.writeFileSync(resolve(save_as || rom_path), new_rom.buffer);
+    finalize_rom(save_as || rom_path, new_rom);
   }
 }
 
 /* Other Helpers */
+
+function finalize_rom (path, rom) {
+  rom.checksum();
+  fs.writeFileSync(resolve(path), rom.buffer);
+}
 
 function get_schema (schema_path) {
   const is_dir = fs.lstatSync(schema_path).isDirectory();
