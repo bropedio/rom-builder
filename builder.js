@@ -78,7 +78,7 @@ class Builder {
   optimize (rom_path, save_as, schema_dir = './schema') {
     const schema = get_schema(schema_dir);
     const rom = new HiRom(fs.readFileSync(resolve(rom_path)));
-    const optimized = schema.decode(rom, 'optimize');
+    const optimized = schema.decode(rom, { optimize: true });
 
     // Reset schema based on optimized data
     const formatted = schema.format(optimized);
