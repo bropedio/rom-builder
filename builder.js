@@ -51,6 +51,11 @@ class Builder {
     }
   }
 
+  checksum (rom_path, save_path) {
+    const rom = new HiRom(fs.readFileSync(resolve(rom_path)));
+    finalize_rom(save_path || rom_path, rom);
+  }
+
   import (rom_path, save_as, data_path = './data', schema_dir = './schema') {
     const schema = get_schema(schema_dir);
     const game_data = schema.parse(read_dir(data_path));
