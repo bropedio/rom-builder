@@ -1,2 +1,3 @@
 *.swp
 .git-original
+node_modules
